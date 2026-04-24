@@ -156,14 +156,15 @@ TEST(lexing, num_operators) {
 }
 
 TEST(lexing, literals) {
-  std::string_view sv = "true false 0 32";
+  std::string_view sv = "true false 0 32 \"hello\"";
   mk_tokens(sv);
   EXPECT_THAT(testing::arcana_slices(tokens),
-              ::testing::ElementsAre("true", "false", "0", "32"));
+              ::testing::ElementsAre("true", "false", "0", "32", "\"hello\""));
 
   EXPECT_THAT(testing::arcana_token_types(tokens),
               ::testing::ElementsAre(token(bool_t), token(bool_f),
-                                     token(integer), token(integer)));
+                                     token(integer), token(integer),
+                                     token(str)));
 
   arcana_tokens_deinit(tokens);
 }

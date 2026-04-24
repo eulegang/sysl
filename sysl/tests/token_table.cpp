@@ -29,6 +29,7 @@ TEST(token_table, exact_match) {
   check(var);
 
   check(integer);
+  check(str);
 
   check(assign);
   check(plus);

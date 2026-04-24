@@ -39,6 +39,33 @@ bool end_block_comment(void *st, char ch) {
   return true;
 }
 
+bool end_str(void *st, char ch) {
+  uint32_t *state = (uint32_t *)st;
+
+  switch (*state) {
+  case 0: {
+    if (ch == '"') {
+      *state = 1;
+    }
+  } break;
+
+  case 1: {
+    if (ch == '\\') {
+      *state = 2;
+    } else if (ch == '"') {
+      *state = 3;
+    }
+  } break;
+  case 2:
+    *state = 1;
+    break;
+
+  case 3:
+    return false;
+  }
+
+  return true;
+}
 } // namespace sysl
 
 #define token(T) (arcana_token_type) sysl_token::T
@@ -128,6 +155,12 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
 
     *token_type = token(div);
     return 1;
+
+  case '"': {
+    int state = 0;
+    *token_type = token(str);
+    return arcana_util_take_stateful(window, &state, sysl::end_str);
+  } break;
 
   case '%':
     if ((inc = arcana_util_keyword(window, "%="))) {
@@ -285,6 +318,7 @@ arcana_token_table_t *sysl_token_table() {
     push_str(var);
 
     push_str(integer);
+    push_str(str);
 
     push_str(assign);
     push_str(plus);

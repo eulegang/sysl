@@ -13,6 +13,7 @@ enum class sysl_token : arcana_token_type {
   var,
 
   integer,
+  str,
 
   assign,
   plus,
