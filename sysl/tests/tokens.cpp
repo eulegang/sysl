@@ -167,3 +167,25 @@ TEST(lexing, literals) {
 
   arcana_tokens_deinit(tokens);
 }
+
+TEST(lexing, line_comments) {
+  std::string_view sv = "1 // 0\n 2";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens), ::testing::ElementsAre("1", "2"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(integer), token(integer)));
+
+  arcana_tokens_deinit(tokens);
+}
+
+TEST(lexing, block_comments) {
+  std::string_view sv = "1 /* 0 */ 2";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens), ::testing::ElementsAre("1", "2"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(integer), token(integer)));
+
+  arcana_tokens_deinit(tokens);
+}

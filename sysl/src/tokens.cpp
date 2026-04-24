@@ -12,6 +12,33 @@ bool is_ident(char ch) {
 }
 
 bool is_integer(char ch) { return ('0' <= ch && ch <= '9'); }
+bool not_newline(char ch) { return ch != '\n'; }
+
+bool end_block_comment(void *st, char ch) {
+  uint32_t *state = (uint32_t *)st;
+
+  if (*state == 2) {
+    return false;
+  }
+
+  switch (ch) {
+  case '/': {
+    if (*state == 1) {
+      *state = 2;
+    }
+  } break;
+
+  case '*':
+    *state = 1;
+    break;
+
+  default:
+    *state = 0;
+  }
+
+  return true;
+}
+
 } // namespace sysl
 
 #define token(T) (arcana_token_type) sysl_token::T
@@ -84,6 +111,16 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
     return 1;
 
   case '/':
+    if (window.len > 1 && window.data[1] == '/') {
+      return -arcana_util_take_while(window, sysl::not_newline);
+    }
+
+    uint32_t state;
+    if (window.len > 1 && window.data[1] == '*') {
+      return -arcana_util_take_stateful(window, &state,
+                                        sysl::end_block_comment);
+    }
+
     if ((inc = arcana_util_keyword(window, "/="))) {
       *token_type = token(div_assign);
       return inc;
