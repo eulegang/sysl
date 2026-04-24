@@ -23,6 +23,10 @@ TEST(token_table, exact_match) {
   check(ns);
   check(strukt);
   check(enumeration);
+  check(bitset);
+
+  check(let);
+  check(var);
 
   check(integer);
 

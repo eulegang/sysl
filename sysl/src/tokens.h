@@ -7,6 +7,10 @@ enum class sysl_token : arcana_token_type {
   ns, // namespace
   strukt,
   enumeration,
+  bitset,
+
+  let,
+  var,
 
   integer,
 

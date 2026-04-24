@@ -64,9 +64,25 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
     *token_type = token(mult);
     return 1;
 
+  case '-':
+    if ((inc = arcana_util_keyword(window, "->"))) {
+      *token_type = token(arrow);
+      return inc;
+    }
+
+    *token_type = token(minus);
+    return 1;
+
   case ',':
     *token_type = token(comma);
     return 1;
+
+  case 'b':
+    if ((inc = arcana_util_keyword(window, "bitset"))) {
+      *token_type = token(bitset);
+      return inc;
+    }
+    break;
 
   case 'e':
     if ((inc = arcana_util_keyword(window, "enum"))) {
@@ -82,6 +98,13 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
     }
     break;
 
+  case 'l':
+    if ((inc = arcana_util_keyword(window, "let"))) {
+      *token_type = token(let);
+      return inc;
+    }
+    break;
+
   case 't':
     if ((inc = arcana_util_keyword(window, "true"))) {
       *token_type = token(bool_t);
@@ -89,15 +112,6 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
     }
 
     break;
-
-  case ':':
-    if ((inc = arcana_util_keyword(window, "::"))) {
-      *token_type = token(dcolon);
-      return inc;
-    }
-
-    *token_type = token(colon);
-    return 1;
 
   case 'n':
     if ((inc = arcana_util_keyword(window, "namespace"))) {
@@ -113,12 +127,36 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
     }
     break;
 
+  case 'v':
+    if ((inc = arcana_util_keyword(window, "var"))) {
+      *token_type = token(var);
+      return inc;
+    }
+    break;
+
+  case ':':
+    if ((inc = arcana_util_keyword(window, "::"))) {
+      *token_type = token(dcolon);
+      return inc;
+    }
+
+    *token_type = token(colon);
+    return 1;
+
   case '{':
     *token_type = token(lbrace);
     return 1;
 
   case '}':
     *token_type = token(rbrace);
+    return 1;
+
+  case '(':
+    *token_type = token(lparen);
+    return 1;
+
+  case ')':
+    *token_type = token(rparen);
     return 1;
   }
 
@@ -141,6 +179,10 @@ arcana_token_table_t *sysl_token_table() {
     push_str(ns);
     push_str(strukt);
     push_str(enumeration);
+    push_str(bitset);
+
+    push_str(let);
+    push_str(var);
 
     push_str(integer);
 

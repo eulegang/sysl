@@ -64,3 +64,63 @@ TEST(lexing, enum_sample) {
                                      token(rbrace)));
   arcana_tokens_deinit(tokens);
 }
+
+TEST(lexing, bitset_sample) {
+  std::string_view sv = "color :: bitset { ERR, ASYNC }";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("color", "::", "bitset", "{", "ERR", ",",
+                                     "ASYNC", "}"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(ident), token(dcolon), token(bitset),
+                                     token(lbrace), token(ident), token(comma),
+                                     token(ident), token(rbrace)));
+  arcana_tokens_deinit(tokens);
+}
+
+TEST(lexing, func_sample) {
+  std::string_view sv = "do_thing :: (id: u32, premium: bool) -> err!*u32";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("do_thing", "::", "(", "id", ":", "u32",
+                                     ",", "premium", ":", "bool", ")", "->",
+                                     "err", "!", "*", "u32"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(
+                  token(ident), token(dcolon), token(lparen), token(ident),
+                  token(colon), token(ident), token(comma), token(ident),
+                  token(colon), token(ident), token(rparen), token(arrow),
+                  token(ident), token(bang), token(mult), token(ident)));
+
+  arcana_tokens_deinit(tokens);
+}
+
+TEST(lexing, const_sample) {
+  std::string_view sv = "let name: u32 = 42";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("let", "name", ":", "u32", "=", "42"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(let), token(ident), token(colon),
+                                     token(ident), token(assign),
+                                     token(integer)));
+
+  arcana_tokens_deinit(tokens);
+}
+
+TEST(lexing, var_sample) {
+  std::string_view sv = "var name: u32 = 42";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("var", "name", ":", "u32", "=", "42"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(var), token(ident), token(colon),
+                                     token(ident), token(assign),
+                                     token(integer)));
+
+  arcana_tokens_deinit(tokens);
+}
