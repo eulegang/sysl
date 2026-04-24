@@ -1,6 +1,134 @@
 #include "tokens.h"
 #include <arcana.h>
-ssize_t sysl_tokenizer(size_t, arcana_slice, arcana_token_type *) { return 0; }
+
+namespace sysl {
+bool is_space(char ch) {
+  return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+}
+
+bool is_ident(char ch) {
+  return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_' ||
+         ('0' <= ch && ch <= '9');
+}
+
+bool is_integer(char ch) { return ('0' <= ch && ch <= '9'); }
+} // namespace sysl
+
+#define token(T) (arcana_token_type) sysl_token::T
+ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
+                       arcana_token_type *token_type) {
+  arcana_slice window = arcana_slice_advance(content, cur);
+
+  char ch = content.data[cur];
+  ssize_t inc = 0;
+
+  switch (ch) {
+  case ' ':
+  case '\t':
+  case '\n':
+  case '\r':
+    return -arcana_util_take_while(window, sysl::is_space);
+
+  case '0':
+  case '1':
+  case '2':
+  case '3':
+  case '4':
+  case '5':
+  case '6':
+  case '7':
+  case '8':
+  case '9':
+    *token_type = token(integer);
+
+    return arcana_util_take_while(window, sysl::is_integer);
+  case '=':
+    if ((inc = arcana_util_keyword(window, "=="))) {
+      *token_type = token(eq);
+      return inc;
+    }
+
+    *token_type = token(assign);
+    return 1;
+
+  case '!':
+    if ((inc = arcana_util_keyword(window, "!="))) {
+      *token_type = token(ne);
+      return inc;
+    }
+
+    *token_type = token(bang);
+    return 1;
+
+  case '*':
+    *token_type = token(mult);
+    return 1;
+
+  case ',':
+    *token_type = token(comma);
+    return 1;
+
+  case 'e':
+    if ((inc = arcana_util_keyword(window, "enum"))) {
+      *token_type = token(enumeration);
+      return inc;
+    }
+    break;
+
+  case 'f':
+    if ((inc = arcana_util_keyword(window, "false"))) {
+      *token_type = token(bool_f);
+      return inc;
+    }
+    break;
+
+  case 't':
+    if ((inc = arcana_util_keyword(window, "true"))) {
+      *token_type = token(bool_t);
+      return inc;
+    }
+
+    break;
+
+  case ':':
+    if ((inc = arcana_util_keyword(window, "::"))) {
+      *token_type = token(dcolon);
+      return inc;
+    }
+
+    *token_type = token(colon);
+    return 1;
+
+  case 'n':
+    if ((inc = arcana_util_keyword(window, "namespace"))) {
+      *token_type = token(ns);
+      return inc;
+    }
+    break;
+
+  case 's':
+    if ((inc = arcana_util_keyword(window, "struct"))) {
+      *token_type = token(strukt);
+      return inc;
+    }
+    break;
+
+  case '{':
+    *token_type = token(lbrace);
+    return 1;
+
+  case '}':
+    *token_type = token(rbrace);
+    return 1;
+  }
+
+  if (('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_') {
+    *token_type = token(ident);
+    return arcana_util_take_while(window, sysl::is_ident);
+  }
+
+  return 0;
+}
 
 #define push_str(id) arcana_token_table_push(&table, #id);
 arcana_token_table_t *sysl_token_table() {
@@ -10,6 +138,9 @@ arcana_token_table_t *sysl_token_table() {
     table = arcana_token_table_init();
 
     push_str(ident);
+    push_str(ns);
+    push_str(strukt);
+    push_str(enumeration);
 
     push_str(integer);
 
@@ -35,6 +166,8 @@ arcana_token_table_t *sysl_token_table() {
     push_str(rbrace);
 
     push_str(arrow);
+    push_str(dcolon);
+    push_str(colon);
 
     push_str(cond);      // if
     push_str(otherwise); // else

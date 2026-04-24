@@ -14,6 +14,7 @@ add_executable(
 
   tests/tokens.cpp
   tests/utils.cpp
+  tests/token_table.cpp
 )
 
 target_include_directories(unit PUBLIC ./src)

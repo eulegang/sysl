@@ -4,6 +4,9 @@
 
 enum class sysl_token : arcana_token_type {
   ident,
+  ns, // namespace
+  strukt,
+  enumeration,
 
   integer,
 
@@ -29,6 +32,8 @@ enum class sysl_token : arcana_token_type {
   rbrace,
 
   arrow,
+  dcolon,
+  colon,
 
   cond,      // if
   otherwise, // else
