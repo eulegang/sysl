@@ -124,3 +124,46 @@ TEST(lexing, var_sample) {
 
   arcana_tokens_deinit(tokens);
 }
+
+TEST(lexing, bool_operators) {
+  std::string_view sv = "! && || &&= ||=";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("!", "&&", "||", "&&=", "||="));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(bang), token(bool_and),
+                                     token(bool_or), token(bool_and_assign),
+                                     token(bool_or_assign)));
+
+  arcana_tokens_deinit(tokens);
+}
+
+TEST(lexing, num_operators) {
+  std::string_view sv = "+ * - / % += *= -= /= %=";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("+", "*", "-", "/", "%",
+                                     "+=", "*=", "-=", "/=", "%="));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(plus), token(mult), token(minus),
+                                     token(div), token(mod), token(plus_assign),
+                                     token(mult_assign), token(minus_assign),
+                                     token(div_assign), token(mod_assign)));
+
+  arcana_tokens_deinit(tokens);
+}
+
+TEST(lexing, literals) {
+  std::string_view sv = "true false 0 32";
+  mk_tokens(sv);
+  EXPECT_THAT(testing::arcana_slices(tokens),
+              ::testing::ElementsAre("true", "false", "0", "32"));
+
+  EXPECT_THAT(testing::arcana_token_types(tokens),
+              ::testing::ElementsAre(token(bool_t), token(bool_f),
+                                     token(integer), token(integer)));
+
+  arcana_tokens_deinit(tokens);
+}

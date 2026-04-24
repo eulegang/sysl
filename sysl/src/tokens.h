@@ -22,6 +22,12 @@ enum class sysl_token : arcana_token_type {
   minus,
   div,
   mult,
+  mod,
+  plus_assign,
+  minus_assign,
+  mult_assign,
+  div_assign,
+  mod_assign,
   eq,
   ne,
 
@@ -45,6 +51,12 @@ enum class sysl_token : arcana_token_type {
 
   bool_t,
   bool_f,
+
+  bool_and,
+  bool_or,
+
+  bool_and_assign,
+  bool_or_assign,
 };
 
 ssize_t sysl_tokenizer(size_t, arcana_slice, arcana_token_type *);

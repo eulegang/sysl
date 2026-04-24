@@ -38,6 +38,14 @@ TEST(token_table, exact_match) {
   check(minus);
   check(div);
   check(mult);
+  check(mod);
+
+  check(plus_assign);
+  check(minus_assign);
+  check(mult_assign);
+  check(div_assign);
+  check(mod_assign);
+
   check(eq);
   check(ne);
 
@@ -61,4 +69,9 @@ TEST(token_table, exact_match) {
 
   check(bool_t);
   check(bool_f);
+  check(bool_and);
+  check(bool_or);
+
+  check(bool_and_assign);
+  check(bool_or_assign);
 }

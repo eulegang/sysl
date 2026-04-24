@@ -61,6 +61,11 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
     return 1;
 
   case '*':
+    if ((inc = arcana_util_keyword(window, "*="))) {
+      *token_type = token(mult_assign);
+      return inc;
+    }
+
     *token_type = token(mult);
     return 1;
 
@@ -70,7 +75,30 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
       return inc;
     }
 
+    if ((inc = arcana_util_keyword(window, "-="))) {
+      *token_type = token(minus_assign);
+      return inc;
+    }
+
     *token_type = token(minus);
+    return 1;
+
+  case '/':
+    if ((inc = arcana_util_keyword(window, "/="))) {
+      *token_type = token(div_assign);
+      return inc;
+    }
+
+    *token_type = token(div);
+    return 1;
+
+  case '%':
+    if ((inc = arcana_util_keyword(window, "%="))) {
+      *token_type = token(mod_assign);
+      return inc;
+    }
+
+    *token_type = token(mod);
     return 1;
 
   case ',':
@@ -158,6 +186,41 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
   case ')':
     *token_type = token(rparen);
     return 1;
+
+  case '&':
+    if ((inc = arcana_util_keyword(window, "&&="))) {
+      *token_type = token(bool_and_assign);
+      return inc;
+    }
+
+    if ((inc = arcana_util_keyword(window, "&&"))) {
+      *token_type = token(bool_and);
+      return inc;
+    }
+
+    break;
+
+  case '|':
+    if ((inc = arcana_util_keyword(window, "||="))) {
+      *token_type = token(bool_or_assign);
+      return inc;
+    }
+
+    if ((inc = arcana_util_keyword(window, "||"))) {
+      *token_type = token(bool_or);
+      return inc;
+    }
+
+    break;
+
+  case '+':
+    if ((inc = arcana_util_keyword(window, "+="))) {
+      *token_type = token(plus_assign);
+      return inc;
+    }
+
+    *token_type = token(plus);
+    return 1;
   }
 
   if (('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_') {
@@ -194,6 +257,13 @@ arcana_token_table_t *sysl_token_table() {
     push_str(minus);
     push_str(div);
     push_str(mult);
+    push_str(mod);
+
+    push_str(plus_assign);
+    push_str(minus_assign);
+    push_str(mult_assign);
+    push_str(div_assign);
+    push_str(mod_assign);
     push_str(eq);
     push_str(ne);
 
@@ -217,6 +287,12 @@ arcana_token_table_t *sysl_token_table() {
 
     push_str(bool_t);
     push_str(bool_f);
+
+    push_str(bool_and);
+    push_str(bool_or);
+
+    push_str(bool_and_assign);
+    push_str(bool_or_assign);
   }
 
   return table;
