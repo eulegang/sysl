@@ -301,12 +301,12 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
   return 0;
 }
 
-#define push_str(id) arcana_token_table_push(&table, #id);
-arcana_token_table_t *sysl_token_table() {
-  static arcana_token_table_t *table = NULL;
+#define push_str(id) arcana_table_push(&table, #id);
+arcana_table *sysl_token_table() {
+  static arcana_table *table = NULL;
 
   if (!table) {
-    table = arcana_token_table_init();
+    table = arcana_table_init();
 
     push_str(ident);
     push_str(ns);

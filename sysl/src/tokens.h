@@ -62,4 +62,4 @@ enum class sysl_token : arcana_token_type {
 
 ssize_t sysl_tokenizer(size_t, arcana_slice, arcana_token_type *);
 
-arcana_token_table_t *sysl_token_table();
+arcana_table *sysl_token_table();
