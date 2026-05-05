@@ -1,7 +1,7 @@
 #include "tokens.h"
 #include <arcana.h>
 
-namespace sysl {
+namespace sysltree {
 bool is_space(char ch) {
   return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
 }
@@ -66,11 +66,10 @@ bool end_str(void *st, char ch) {
 
   return true;
 }
-} // namespace sysl
 
-#define token(T) (arcana_token_type) sysl_token::T
-ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
-                       arcana_token_type *token_type) {
+#define token(T) (arcana_token_type) sysltree::token::T
+ssize_t tokenizer(size_t cur, arcana_slice content,
+                  arcana_token_type *token_type) {
   arcana_slice window = arcana_slice_advance(content, cur);
 
   char ch = content.data[cur];
@@ -81,7 +80,7 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
   case '\t':
   case '\n':
   case '\r':
-    return -arcana_util_take_while(window, sysl::is_space);
+    return -arcana_util_take_while(window, sysltree::is_space);
 
   case '0':
   case '1':
@@ -95,7 +94,7 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
   case '9':
     *token_type = token(integer);
 
-    return arcana_util_take_while(window, sysl::is_integer);
+    return arcana_util_take_while(window, sysltree::is_integer);
   case '=':
     if ((inc = arcana_util_keyword(window, "=="))) {
       *token_type = token(eq);
@@ -139,13 +138,13 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
 
   case '/':
     if (window.len > 1 && window.data[1] == '/') {
-      return -arcana_util_take_while(window, sysl::not_newline);
+      return -arcana_util_take_while(window, sysltree::not_newline);
     }
 
     uint32_t state;
     if (window.len > 1 && window.data[1] == '*') {
       return -arcana_util_take_stateful(window, &state,
-                                        sysl::end_block_comment);
+                                        sysltree::end_block_comment);
     }
 
     if ((inc = arcana_util_keyword(window, "/="))) {
@@ -159,7 +158,7 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
   case '"': {
     int state = 0;
     *token_type = token(str);
-    return arcana_util_take_stateful(window, &state, sysl::end_str);
+    return arcana_util_take_stateful(window, &state, sysltree::end_str);
   } break;
 
   case '%':
@@ -295,76 +294,83 @@ ssize_t sysl_tokenizer(size_t cur, arcana_slice content,
 
   if (('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_') {
     *token_type = token(ident);
-    return arcana_util_take_while(window, sysl::is_ident);
+    return arcana_util_take_while(window, sysltree::is_ident);
   }
 
   return 0;
 }
 
+arcana_table *table;
+
 #define push_str(id) arcana_table_push(&table, #id);
-arcana_table *sysl_token_table() {
-  static arcana_table *table = NULL;
+void init_table() {
+  table = arcana_table_init();
 
-  if (!table) {
-    table = arcana_table_init();
+  push_str(ident);
+  push_str(ns);
+  push_str(strukt);
+  push_str(enumeration);
+  push_str(bitset);
 
-    push_str(ident);
-    push_str(ns);
-    push_str(strukt);
-    push_str(enumeration);
-    push_str(bitset);
+  push_str(let);
+  push_str(var);
 
-    push_str(let);
-    push_str(var);
+  push_str(integer);
+  push_str(str);
 
-    push_str(integer);
-    push_str(str);
+  push_str(assign);
+  push_str(plus);
+  push_str(comma);
+  push_str(semi);
+  push_str(bang);
+  push_str(minus);
+  push_str(div);
+  push_str(mult);
+  push_str(mod);
 
-    push_str(assign);
-    push_str(plus);
-    push_str(comma);
-    push_str(semi);
-    push_str(bang);
-    push_str(minus);
-    push_str(div);
-    push_str(mult);
-    push_str(mod);
+  push_str(plus_assign);
+  push_str(minus_assign);
+  push_str(mult_assign);
+  push_str(div_assign);
+  push_str(mod_assign);
+  push_str(eq);
+  push_str(ne);
 
-    push_str(plus_assign);
-    push_str(minus_assign);
-    push_str(mult_assign);
-    push_str(div_assign);
-    push_str(mod_assign);
-    push_str(eq);
-    push_str(ne);
+  push_str(lt);
+  push_str(le);
+  push_str(gt);
+  push_str(ge);
 
-    push_str(lt);
-    push_str(le);
-    push_str(gt);
-    push_str(ge);
+  push_str(lparen);
+  push_str(rparen);
+  push_str(lbrace);
+  push_str(rbrace);
 
-    push_str(lparen);
-    push_str(rparen);
-    push_str(lbrace);
-    push_str(rbrace);
+  push_str(arrow);
+  push_str(dcolon);
+  push_str(colon);
 
-    push_str(arrow);
-    push_str(dcolon);
-    push_str(colon);
+  push_str(cond);      // if
+  push_str(otherwise); // else
+  push_str(ret);
 
-    push_str(cond);      // if
-    push_str(otherwise); // else
-    push_str(ret);
+  push_str(bool_t);
+  push_str(bool_f);
 
-    push_str(bool_t);
-    push_str(bool_f);
+  push_str(bool_and);
+  push_str(bool_or);
 
-    push_str(bool_and);
-    push_str(bool_or);
+  push_str(bool_and_assign);
+  push_str(bool_or_assign);
+}
 
-    push_str(bool_and_assign);
-    push_str(bool_or_assign);
-  }
+void deinit_table() { arcana_table_deinit(table); }
 
-  return table;
+} // namespace sysltree
+
+std::ostream &operator<<(std::ostream &os, const sysltree::token &token_type) {
+  const char *name =
+      arcana_table_data(sysltree::table)[(arcana_token_type)token_type];
+
+  return os << name;
 }

@@ -5,14 +5,13 @@
 #include <gtest/gtest.h>
 
 #include "tokens.h"
-#include "utils.h"
 
 #define token(T) sysl_token::T
 
-#define check(token)                                                           \
+#define check(T)                                                               \
   ss.str("");                                                                  \
-  ss << sysl_token::token;                                                     \
-  EXPECT_EQ(ss.str(), #token);
+  ss << sysltree::token::T;                                                    \
+  EXPECT_EQ(ss.str(), #T);
 
 TEST(token_table, exact_match) {
   std::stringstream ss;

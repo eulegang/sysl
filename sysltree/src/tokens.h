@@ -1,8 +1,9 @@
 #pragma once
 
 #include "arcana.h"
-
-enum class sysl_token : arcana_token_type {
+#include <ostream>
+namespace sysltree {
+enum class token : arcana_token_type {
   ident,
   ns, // namespace
   strukt,
@@ -60,6 +61,12 @@ enum class sysl_token : arcana_token_type {
   bool_or_assign,
 };
 
-ssize_t sysl_tokenizer(size_t, arcana_slice, arcana_token_type *);
+ssize_t tokenizer(size_t, arcana_slice, arcana_token_type *);
 
-arcana_table *sysl_token_table();
+extern arcana_table *table;
+
+void init_table(void) __attribute__((constructor));
+void deinit_table(void) __attribute__((destructor));
+} // namespace sysltree
+
+std::ostream &operator<<(std::ostream &, const sysltree::token &);

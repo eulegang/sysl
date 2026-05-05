@@ -6,14 +6,14 @@
 #include "tokens.h"
 #include "utils.h"
 
-#define token(T) sysl_token::T
+#define token(T) sysltree::token::T
 
 #define mk_tokens(sv)                                                          \
   arcana_tokens *tokens;                                                       \
   do {                                                                         \
     arcana_tokens_options opts = {                                             \
         .content = {.data = sv.data(), .len = sv.length()},                    \
-        .tokenizer = sysl_tokenizer,                                           \
+        .tokenizer = sysltree::tokenizer,                                      \
     };                                                                         \
     arcana_tokens_error err;                                                   \
     tokens = arcana_tokens_init(opts, &err);                                   \

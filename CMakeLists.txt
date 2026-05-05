@@ -7,6 +7,6 @@ project(sysl
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ARCANA REQUIRED IMPORTED_TARGET arcana)
-add_subdirectory(sysl)
+add_subdirectory(sysltree)
 
 
