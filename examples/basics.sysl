@@ -1,0 +1,9 @@
+arcana :: namespace {
+  token_type :: enum(u32) {
+
+  }
+
+  token :: struct {
+    type: token_type
+  }
+}

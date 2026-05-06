@@ -4,6 +4,8 @@ add_library(
 )
 
 pkg_check_modules(ARCANA REQUIRED IMPORTED_TARGET arcana)
+pkg_check_modules(MFILE REQUIRED IMPORTED_TARGET mfile)
+pkg_check_modules(CHROMA REQUIRED IMPORTED_TARGET chroma)
 
 target_link_libraries(sysltree PUBLIC PkgConfig::ARCANA)
 
@@ -27,3 +29,15 @@ add_test(
   COMMAND unit
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+add_executable(
+  sysl-tokenize
+
+  bin/tokenize.cpp
+)
+
+target_include_directories(sysl-tokenize PUBLIC ./src)
+target_link_libraries(sysl-tokenize sysltree)
+target_link_libraries(sysl-tokenize PkgConfig::ARCANA)
+target_link_libraries(sysl-tokenize PkgConfig::MFILE)
+target_link_libraries(sysl-tokenize PkgConfig::CHROMA)
