@@ -82,7 +82,65 @@ int main(int argc, char **argv) {
 }
 
 chroma::basic_t token_color(sysltree::token type) {
-  (void)type;
+
+  switch (type) {
+  case sysltree::token::ident:
+    return chroma::cyan;
+  case sysltree::token::ns:
+  case sysltree::token::strukt:
+  case sysltree::token::enumeration:
+  case sysltree::token::bitset:
+    return chroma::purple;
+
+  case sysltree::token::cond:
+  case sysltree::token::otherwise:
+  case sysltree::token::ret:
+  case sysltree::token::let:
+  case sysltree::token::var:
+    return chroma::purple;
+
+  case sysltree::token::integer:
+  case sysltree::token::str:
+  case sysltree::token::bool_t:
+  case sysltree::token::bool_f:
+    return chroma::cyan;
+
+  case sysltree::token::bool_and:
+  case sysltree::token::bool_or:
+  case sysltree::token::bool_and_assign:
+  case sysltree::token::bool_or_assign:
+  case sysltree::token::assign:
+  case sysltree::token::plus:
+  case sysltree::token::bang:
+  case sysltree::token::minus:
+  case sysltree::token::div:
+  case sysltree::token::mult:
+  case sysltree::token::mod:
+  case sysltree::token::plus_assign:
+  case sysltree::token::minus_assign:
+  case sysltree::token::mult_assign:
+  case sysltree::token::div_assign:
+  case sysltree::token::mod_assign:
+  case sysltree::token::eq:
+  case sysltree::token::ne:
+  case sysltree::token::lt:
+  case sysltree::token::le:
+  case sysltree::token::gt:
+  case sysltree::token::ge:
+    return chroma::blue;
+
+  case sysltree::token::comma:
+  case sysltree::token::semi:
+  case sysltree::token::lparen:
+  case sysltree::token::rparen:
+  case sysltree::token::lbrace:
+  case sysltree::token::rbrace:
+  case sysltree::token::arrow:
+  case sysltree::token::dcolon:
+  case sysltree::token::colon:
+    return chroma::yellow;
+  }
+
   return chroma::cyan;
 }
 
@@ -138,8 +196,8 @@ bool lex_file(std::string_view content, const char *path) {
                 << meta[i].line << ":" << meta[i].column << "\t"
                 << chroma::purple << text << chroma::clear << std::endl;
     } else {
-
-      std::cout << pad << type << std::endl;
+      std::cout << pad << token_color(type) << type << chroma::clear
+                << std::endl;
     }
   }
 
