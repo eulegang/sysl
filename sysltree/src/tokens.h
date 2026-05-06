@@ -59,6 +59,8 @@ enum class token : arcana_token_type {
 
   bool_and_assign,
   bool_or_assign,
+
+  END = bool_or_assign,
 };
 
 ssize_t tokenizer(size_t, arcana_slice, arcana_token_type *);

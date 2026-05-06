@@ -1,6 +1,7 @@
 add_library(
   sysltree SHARED
   src/tokens.cpp
+  src/tree.cpp
 )
 
 pkg_check_modules(ARCANA REQUIRED IMPORTED_TARGET arcana)
