@@ -308,8 +308,8 @@ void init_table() {
 
   push_str(ident);
   push_str(ns);
-  push_str(strukt);
-  push_str(enumeration);
+  arcana_table_push(&table, "struct"); // push_str(strukt);
+  arcana_table_push(&table, "enum");   // push_str(enumeration);
   push_str(bitset);
 
   push_str(let);
@@ -350,8 +350,8 @@ void init_table() {
   push_str(dcolon);
   push_str(colon);
 
-  push_str(cond);      // if
-  push_str(otherwise); // else
+  arcana_table_push(&table, "if");   // push_str(cond);      // if
+  arcana_table_push(&table, "else"); // push_str(otherwise); // else
   push_str(ret);
 
   push_str(bool_t);

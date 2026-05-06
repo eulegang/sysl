@@ -20,8 +20,15 @@ TEST(token_table, exact_match) {
 
   check(ident);
   check(ns);
-  check(strukt);
-  check(enumeration);
+
+  ss.str("");
+  ss << sysltree::token::strukt;
+  EXPECT_EQ(ss.str(), "struct");
+
+  ss.str("");
+  ss << sysltree::token::enumeration;
+  EXPECT_EQ(ss.str(), "enum");
+
   check(bitset);
 
   check(let);
@@ -63,8 +70,14 @@ TEST(token_table, exact_match) {
   check(dcolon);
   check(colon);
 
-  check(cond);
-  check(otherwise);
+  ss.str("");
+  ss << sysltree::token::cond;
+  EXPECT_EQ(ss.str(), "if");
+
+  ss.str("");
+  ss << sysltree::token::otherwise;
+  EXPECT_EQ(ss.str(), "else");
+
   check(ret);
 
   check(bool_t);
