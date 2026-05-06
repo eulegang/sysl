@@ -82,6 +82,10 @@ ssize_t tokenizer(size_t cur, arcana_slice content,
   case '\r':
     return -arcana_util_take_while(window, sysltree::is_space);
 
+  case ';':
+    *token_type = token(semi);
+    return 1;
+
   case '0':
   case '1':
   case '2':
