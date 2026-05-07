@@ -2,12 +2,17 @@ add_library(
   sysltree SHARED
   src/tokens.cpp
   src/tree.cpp
+  src/parsers/bitset.cpp
+  src/parsers/ident.cpp
+  src/parsers/lit.cpp
 )
 
 pkg_check_modules(ARCANA REQUIRED IMPORTED_TARGET arcana)
 pkg_check_modules(MFILE REQUIRED IMPORTED_TARGET mfile)
 pkg_check_modules(CHROMA REQUIRED IMPORTED_TARGET chroma)
 
+# target_include_directories(sysltree PUBLIC ./src/parsers/)
+# target_include_directories(sysltree PUBLIC ./src/)
 target_link_libraries(sysltree PUBLIC PkgConfig::ARCANA)
 
 find_package(GTest REQUIRED)
@@ -42,3 +47,15 @@ target_link_libraries(sysl-tokenize sysltree)
 target_link_libraries(sysl-tokenize PkgConfig::ARCANA)
 target_link_libraries(sysl-tokenize PkgConfig::MFILE)
 target_link_libraries(sysl-tokenize PkgConfig::CHROMA)
+
+add_executable(
+  sysl-ast
+
+  bin/ast.cpp
+)
+
+target_include_directories(sysl-ast PUBLIC ./src)
+target_link_libraries(sysl-ast sysltree)
+target_link_libraries(sysl-ast PkgConfig::ARCANA)
+target_link_libraries(sysl-ast PkgConfig::MFILE)
+target_link_libraries(sysl-ast PkgConfig::CHROMA)

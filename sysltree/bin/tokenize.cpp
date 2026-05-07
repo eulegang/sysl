@@ -18,9 +18,6 @@ bool verbose = false;
 bool color = true;
 
 int main(int argc, char **argv) {
-  (void)argc;
-  (void)argv;
-
   static struct option long_options[] = {
       {"verbose", no_argument, 0, 'v'},
       {"help", no_argument, 0, 'h'},

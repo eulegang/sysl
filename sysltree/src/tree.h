@@ -2,18 +2,32 @@
 #include "arcana.h"
 
 namespace sysltree {
-enum class node : uint32_t {
+enum class node : uint16_t {
   declare,
   ident,
+
   ns, // namespace
   st, // struct
   en, // enum
+
+  /* BitSet */
   bs, // bitset
+  bs_case,
+
+  literal,
+
+  infer_type,
 };
 
-struct ident_chain {
+enum class primitive : uint16_t {
+  integer,
+  floating,
+  boolean,
+};
+
+struct literal_data {
   uint16_t token;
-  uint16_t len;
+  primitive prim;
 };
 
 enum class perc : size_t {
