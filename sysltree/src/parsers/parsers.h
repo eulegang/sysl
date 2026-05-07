@@ -11,4 +11,6 @@ namespace sysltree {
 arcana_state parse_bitset(arcana_state state);
 arcana_state parse_ident(arcana_state state);
 arcana_state parse_lit(arcana_state state);
+arcana_state parse_namespace(arcana_state state);
+arcana_state parse_declaration(arcana_state state);
 } // namespace sysltree

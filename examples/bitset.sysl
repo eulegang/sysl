@@ -1,7 +1,9 @@
-status :: bitset (u32) {
-  invalid_token,
-  token_overflow,
-  invalid_branch,
+arcana :: namespace {
+  status :: bitset (u32) {
+    invalid_token,
+    token_overflow,
+    invalid_branch,
 
-  spurious = 6
+    spurious = 6
+  }
 }
