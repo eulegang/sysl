@@ -49,6 +49,11 @@ arcana_state parse_declaration(arcana_state state) {
     ident->next = state.subroot;
     break;
 
+  case sysltree::token::alias:
+    state = parse_alias(state);
+    ident->next = state.subroot;
+    break;
+
   default:
     state.status |= 4;
     return state;

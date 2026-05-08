@@ -127,4 +127,41 @@ arcana_state parse_struct(arcana_state state) {
 
   return state;
 }
+
+arcana_state parse_alias(arcana_state state) {
+  arcana_token token = arcana_state_token(state);
+
+  if (token.type != token_code(alias)) {
+    state.status |= 4;
+    return state;
+  }
+  uint16_t node = arcana_state_alloc_node(&state);
+  arcana_node *root = arcana_state_node(state, node);
+  *root = {
+      .child = 0,
+      .next = 0,
+      .offset = 0,
+      .type = node_code(alias),
+  };
+
+  arcana_state_next(&state);
+
+  state = parse_type(state);
+  if (state.status)
+    return state;
+
+  token = arcana_state_token(state);
+  if (token.type != token_code(semi)) {
+    state.status |= 4;
+    return state;
+  }
+
+  arcana_state_next(&state);
+
+  root->child = state.subroot;
+
+  state.subroot = node;
+  return state;
+}
+
 } // namespace sysltree

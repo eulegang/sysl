@@ -15,6 +15,7 @@ arcana_state parse_namespace(arcana_state state);
 arcana_state parse_declaration(arcana_state state);
 arcana_state parse_enum(arcana_state state);
 arcana_state parse_struct(arcana_state state);
+arcana_state parse_alias(arcana_state state);
 
 arcana_state parse_type(arcana_state state);
 

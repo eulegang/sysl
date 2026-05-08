@@ -24,6 +24,7 @@ enum class node : uint16_t {
   literal,
 
   ty, // a type slot
+  alias,
   infer_type,
 };
 

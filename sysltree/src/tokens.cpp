@@ -178,6 +178,13 @@ ssize_t tokenizer(size_t cur, arcana_slice content,
     *token_type = token(comma);
     return 1;
 
+  case 'a':
+    if ((inc = arcana_util_keyword(window, "alias"))) {
+      *token_type = token(alias);
+      return inc;
+    }
+    break;
+
   case 'b':
     if ((inc = arcana_util_keyword(window, "bitset"))) {
       *token_type = token(bitset);
@@ -315,6 +322,7 @@ void init_table() {
   arcana_table_push(&table, "struct"); // push_str(strukt);
   arcana_table_push(&table, "enum");   // push_str(enumeration);
   push_str(bitset);
+  push_str(alias);
 
   push_str(let);
   push_str(var);

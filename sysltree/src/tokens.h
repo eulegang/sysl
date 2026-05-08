@@ -9,6 +9,7 @@ enum class token : arcana_token_type {
   strukt,
   enumeration,
   bitset,
+  alias,
 
   let,
   var,

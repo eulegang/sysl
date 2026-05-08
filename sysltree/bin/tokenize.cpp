@@ -87,6 +87,7 @@ chroma::basic_t token_color(sysltree::token type) {
   case sysltree::token::strukt:
   case sysltree::token::enumeration:
   case sysltree::token::bitset:
+  case sysltree::token::alias:
     return chroma::purple;
 
   case sysltree::token::cond:

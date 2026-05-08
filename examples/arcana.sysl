@@ -1,6 +1,7 @@
 arcana :: namespace {
-  // token_type :: alias u32;
-  token_type :: enum(u32) { EOF; }
+  token_type :: alias u32;
+
+  // token_type :: enum(u32) { EOF; }
   token :: struct {
     type: token_type;
     off: u16;

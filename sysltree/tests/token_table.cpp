@@ -30,6 +30,7 @@ TEST(token_table, exact_match) {
   EXPECT_EQ(ss.str(), "enum");
 
   check(bitset);
+  check(alias);
 
   check(let);
   check(var);
