@@ -1,4 +1,4 @@
-
+;
 #include "parsers.h"
 #include <arcana.h>
 
@@ -116,6 +116,7 @@ arcana_state parse_struct(arcana_state state) {
       return state;
     }
 
+    bool semi_required = false;
     switch ((sysltree::token)peek.type) {
     case sysltree::token::colon:
       state = parse_struct_field(state);
@@ -128,6 +129,8 @@ arcana_state parse_struct(arcana_state state) {
         fields_cur = arcana_ast_nodes(state.ast) + fields_cur->next;
       }
 
+      semi_required = true;
+
       break;
 
     case sysltree::token::dcolon:
@@ -139,6 +142,8 @@ arcana_state parse_struct(arcana_state state) {
         decls_cur->next = state.subroot;
         decls_cur = arcana_ast_nodes(state.ast) + decls_cur->next;
       }
+
+      semi_required = false;
 
       break;
 
@@ -157,12 +162,14 @@ arcana_state parse_struct(arcana_state state) {
       break;
     }
 
-    if (token.type != token_code(semi)) {
-      state.status |= 4;
-      return state;
-    }
+    if (semi_required) {
+      if (token.type != token_code(semi)) {
+        state.status |= 4;
+        return state;
+      }
 
-    arcana_state_next(&state);
+      arcana_state_next(&state);
+    }
   }
 
   state.subroot = node;
