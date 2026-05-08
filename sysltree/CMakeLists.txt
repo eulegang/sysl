@@ -8,6 +8,8 @@ add_library(
   src/parsers/declaration.cpp
   src/parsers/namespace.cpp
   src/parsers/enum.cpp
+  src/parsers/struct.cpp
+  src/parsers/types.cpp
 )
 
 pkg_check_modules(ARCANA REQUIRED IMPORTED_TARGET arcana)

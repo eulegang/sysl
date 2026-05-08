@@ -45,7 +45,8 @@ arcana_state parse_declaration(arcana_state state) {
     break;
 
   case sysltree::token::strukt:
-    state.status |= 4;
+    state = parse_struct(state);
+    ident->next = state.subroot;
     break;
 
   default:

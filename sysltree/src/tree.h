@@ -7,18 +7,23 @@ enum class node : uint16_t {
   ident,
 
   ns, // namespace
-  st, // struct
+
+  /* Struct */
+  st,
+  st_fields,
+  st_field,
 
   /* Enums */
   en, // enum
   en_case,
 
   /* BitSet */
-  bs, // bitset
+  bs,
   bs_case,
 
   literal,
 
+  ty, // a type slot
   infer_type,
 };
 

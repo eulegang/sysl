@@ -1,3 +1,16 @@
 arcana :: namespace {
+  // token_type :: alias u32;
   token_type :: enum(u32) { EOF; }
+  token :: struct {
+    type: token_type;
+    off: u16;
+    len: u16;
+  }
+
+  // tokenizer :: alias fn(cur: u64, content: []u8, ty: *token_type) -> i64;
+  //
+  position :: struct {
+    line: u16;
+    column: u16;
+  }
 }
