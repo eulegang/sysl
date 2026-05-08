@@ -1,5 +1,6 @@
 #include "tokens.h"
 #include "tree.h"
+#include "util.h"
 #include <arcana.h>
 #include <getopt.h>
 #include <iostream>
@@ -243,30 +244,17 @@ bool parse_file(std::string_view content, const char *path) {
     if (path)
       std::cerr << path << ":" << std::endl;
 
-    switch (err.err) {
-    case ARCANA_TOKENS_ERROR_MAP:
-      std::cerr << "failed to map memory" << std::endl;
-      break;
-    case ARCANA_TOKENS_ERROR_OVERFLOW:
-      std::cerr << "File to large to tokenize" << std::endl;
-      break;
-    case ARCANA_TOKENS_ERROR_INVALID:
-      std::cerr << "Invalid token found" << std::endl;
-      auto len = content.find_first_of("\n", err.pos);
-      auto sub = content.substr(err.pos, len - 1);
-      std::cerr << sub << std::endl;
-      std::cerr << "^" << std::endl;
-
-      break;
-    }
-
+    report_token_error(err, content);
     return false;
   }
 
-  arcana_ast *ast = arcana_parser_parse(sysltree::parser, tokens);
+  arcana_parser_error parse_err;
+  arcana_ast *ast = arcana_parser_parse(sysltree::parser, tokens, &parse_err);
 
   if (!ast) {
     std::cerr << "failed to parse" << std::endl;
+
+    report_parse_error(parse_err, tokens, content);
     arcana_tokens_deinit(tokens);
     return true;
   }

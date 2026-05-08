@@ -57,6 +57,7 @@ add_executable(
   sysl-ast
 
   bin/ast.cpp
+  bin/util.cpp
 )
 
 target_include_directories(sysl-ast PUBLIC ./src)
