@@ -6,6 +6,8 @@ enum class node : uint16_t {
   declare,
   ident,
 
+  decls,
+
   ns, // namespace
   alias,
 

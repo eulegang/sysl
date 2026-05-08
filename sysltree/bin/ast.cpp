@@ -111,6 +111,10 @@ void dump_sysl(arcana_node node, void *data, size_t level, arcana_slice content,
     out << chroma::hex(0xff00ff) << "alias";
     break;
 
+  case sysltree::node::decls:
+    out << chroma::hex(0xff00ff) << "decls";
+    break;
+
   case sysltree::node::st:
     out << chroma::hex(0xff00ff) << "struct";
     break;

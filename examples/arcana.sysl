@@ -15,8 +15,14 @@ arcana :: namespace {
     column: u16;
   }
 
-  options :: struct {
-    content: *u8;
-    tokenizer: tokenizer;
+  tokens :: struct {
+    len: u64;
+    content: []u8;
+    cap: u64;
+
+    options :: struct {
+      content: []u8;
+      tokenizer: tokenizer;
+    }
   }
 }

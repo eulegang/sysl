@@ -76,6 +76,16 @@ arcana_state parse_struct(arcana_state state) {
       .type = node_code(st_fields),
   };
 
+  uint16_t decls_id = arcana_state_alloc_node(&state);
+  arcana_node *decls = arcana_state_node(state, decls_id);
+  fields->next = decls_id;
+  *decls = {
+      .child = 0,
+      .next = 0,
+      .offset = 0,
+      .type = node_code(decls),
+  };
+
   arcana_state_next(&state);
   if (state.status)
     return state;
@@ -89,6 +99,8 @@ arcana_state parse_struct(arcana_state state) {
   arcana_state_next(&state);
 
   arcana_node *fields_cur = fields;
+  arcana_node *decls_cur = decls;
+
   while (true) {
     token = arcana_state_token(state);
     if (token.type == token_code(rbrace)) {
@@ -96,7 +108,45 @@ arcana_state parse_struct(arcana_state state) {
       break;
     }
 
-    state = parse_struct_field(state);
+    token = arcana_state_token(state);
+    arcana_token peek = arcana_state_peek(state, 1);
+
+    if (token.type != token_code(ident)) {
+      state.status |= 4;
+      return state;
+    }
+
+    switch ((sysltree::token)peek.type) {
+    case sysltree::token::colon:
+      state = parse_struct_field(state);
+
+      if (fields_cur == fields) {
+        fields_cur->child = state.subroot;
+        fields_cur = arcana_ast_nodes(state.ast) + fields_cur->child;
+      } else {
+        fields_cur->next = state.subroot;
+        fields_cur = arcana_ast_nodes(state.ast) + fields_cur->next;
+      }
+
+      break;
+
+    case sysltree::token::dcolon:
+      state = parse_declaration(state);
+      if (decls_cur == decls) {
+        decls_cur->child = state.subroot;
+        decls_cur = arcana_ast_nodes(state.ast) + decls_cur->child;
+      } else {
+        decls_cur->next = state.subroot;
+        decls_cur = arcana_ast_nodes(state.ast) + decls_cur->next;
+      }
+
+      break;
+
+    default:
+      state.status |= 4;
+      return state;
+    }
+
     if (state.status) {
       return state;
     }
@@ -113,14 +163,6 @@ arcana_state parse_struct(arcana_state state) {
     }
 
     arcana_state_next(&state);
-
-    if (fields_cur == fields) {
-      fields_cur->child = state.subroot;
-      fields_cur = arcana_ast_nodes(state.ast) + fields_cur->child;
-    } else {
-      fields_cur->next = state.subroot;
-      fields_cur = arcana_ast_nodes(state.ast) + fields_cur->next;
-    }
   }
 
   state.subroot = node;
