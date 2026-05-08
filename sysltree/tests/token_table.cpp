@@ -66,6 +66,8 @@ TEST(token_table, exact_match) {
   check(rparen);
   check(lbrace);
   check(rbrace);
+  check(lbracket);
+  check(rbracket);
 
   check(arrow);
   check(dcolon);

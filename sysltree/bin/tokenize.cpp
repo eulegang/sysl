@@ -133,6 +133,8 @@ chroma::basic_t token_color(sysltree::token type) {
   case sysltree::token::rparen:
   case sysltree::token::lbrace:
   case sysltree::token::rbrace:
+  case sysltree::token::lbracket:
+  case sysltree::token::rbracket:
   case sysltree::token::arrow:
   case sysltree::token::dcolon:
   case sysltree::token::colon:

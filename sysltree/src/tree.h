@@ -7,11 +7,14 @@ enum class node : uint16_t {
   ident,
 
   ns, // namespace
+  alias,
 
   /* Struct */
   st,
   st_fields,
   st_field,
+
+  infer_type, // useful for bitset / enums
 
   /* Enums */
   en, // enum
@@ -24,8 +27,11 @@ enum class node : uint16_t {
   literal,
 
   ty, // a type slot
-  alias,
-  infer_type,
+
+  slice,
+  array,
+  pointer,
+
 };
 
 enum class primitive : uint16_t {

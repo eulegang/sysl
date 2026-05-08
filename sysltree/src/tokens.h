@@ -43,6 +43,8 @@ enum class token : arcana_token_type {
   rparen,
   lbrace,
   rbrace,
+  lbracket,
+  rbracket,
 
   arrow,
   dcolon,

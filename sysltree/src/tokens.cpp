@@ -267,6 +267,14 @@ ssize_t tokenizer(size_t cur, arcana_slice content,
     *token_type = token(rparen);
     return 1;
 
+  case '[':
+    *token_type = token(lbracket);
+    return 1;
+
+  case ']':
+    *token_type = token(rbracket);
+    return 1;
+
   case '&':
     if ((inc = arcana_util_keyword(window, "&&="))) {
       *token_type = token(bool_and_assign);
@@ -357,6 +365,8 @@ void init_table() {
   push_str(rparen);
   push_str(lbrace);
   push_str(rbrace);
+  push_str(lbracket);
+  push_str(rbracket);
 
   push_str(arrow);
   push_str(dcolon);
