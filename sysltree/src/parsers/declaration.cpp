@@ -40,6 +40,10 @@ arcana_state parse_declaration(arcana_state state) {
     break;
 
   case sysltree::token::enumeration:
+    state = parse_enum(state);
+    ident->next = state.subroot;
+    break;
+
   case sysltree::token::strukt:
     state.status |= 4;
     break;

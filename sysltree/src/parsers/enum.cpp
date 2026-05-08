@@ -2,7 +2,7 @@
 #include <arcana.h>
 
 namespace sysltree {
-arcana_state parse_bitset_backing(arcana_state state) {
+arcana_state parse_enum_backing(arcana_state state) {
   arcana_token token = arcana_state_token(state);
 
   if (token.type != token_code(lparen)) {
@@ -37,7 +37,7 @@ arcana_state parse_bitset_backing(arcana_state state) {
   return state;
 }
 
-arcana_state parse_bitset_case(arcana_state state) {
+arcana_state parse_enum_case(arcana_state state) {
   arcana_token token = arcana_state_token(state);
 
   if (token.type != token_code(ident)) {
@@ -54,7 +54,7 @@ arcana_state parse_bitset_case(arcana_state state) {
       .child = 0,
       .next = 0,
       .offset = data,
-      .type = node_code(bs_case),
+      .type = node_code(en_case),
   };
 
   arcana_state_next(&state);
@@ -82,10 +82,11 @@ arcana_state parse_bitset_case(arcana_state state) {
   return state;
 }
 
-arcana_state parse_bitset(arcana_state state) {
+arcana_state parse_enum(arcana_state state) {
+
   arcana_token token = arcana_state_token(state);
 
-  if (token.type != token_code(bitset)) {
+  if (token.type != token_code(enumeration)) {
     state.status |= 4;
     return state;
   }
@@ -96,13 +97,13 @@ arcana_state parse_bitset(arcana_state state) {
       .child = 0,
       .next = 0,
       .offset = 0,
-      .type = node_code(bs),
+      .type = node_code(en),
   };
   arcana_state_next(&state);
   if (state.status)
     return state;
 
-  state = parse_bitset_backing(state);
+  state = parse_enum_backing(state);
 
   root->child = state.subroot;
 
@@ -125,19 +126,19 @@ arcana_state parse_bitset(arcana_state state) {
       break;
     }
 
-    state = parse_bitset_case(state);
+    state = parse_enum_case(state);
     if (state.status) {
       return state;
     }
-
-    cur->next = state.subroot;
-    cur = arcana_ast_nodes(state.ast) + cur->next;
 
     token = arcana_state_token(state);
     if (token.type == token_code(rbrace)) {
       arcana_state_next(&state);
       break;
     }
+
+    cur->next = state.subroot;
+    cur = arcana_ast_nodes(state.ast) + cur->next;
 
     if (token.type != token_code(semi)) {
       state.status |= 4;
@@ -149,5 +150,5 @@ arcana_state parse_bitset(arcana_state state) {
 
   state.subroot = node;
   return state;
-} // namespace sysltree
+}
 } // namespace sysltree

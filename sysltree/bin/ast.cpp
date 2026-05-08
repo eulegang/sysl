@@ -115,12 +115,25 @@ void dump_sysl(arcana_node node, void *data, size_t level, arcana_slice content,
     out << chroma::hex(0xff00ff) << "enum";
     break;
 
+  case sysltree::node::en_case:
+    out << chroma::hex(0xff00aa) << "enum-case";
+
+    if (verbose) {
+      uint16_t idx = *(uint16_t *)data;
+      auto token = arcana_tokens_data(ctx->tokens)[idx];
+      std::string_view ident{content.data + token.off, token.len};
+
+      out << " " << chroma::hex(0xaaffaa) << ident;
+    }
+
+    break;
+
   case sysltree::node::bs:
     out << chroma::hex(0xff00ff) << "bitset";
     break;
 
   case sysltree::node::bs_case:
-    out << chroma::hex(0xff00aa) << "bitest-case";
+    out << chroma::hex(0xff00aa) << "bitset-case";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;

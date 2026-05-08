@@ -1,0 +1,3 @@
+arcana :: namespace {
+  token_type :: enum(u32) { EOF; }
+}

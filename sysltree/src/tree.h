@@ -8,7 +8,10 @@ enum class node : uint16_t {
 
   ns, // namespace
   st, // struct
+
+  /* Enums */
   en, // enum
+  en_case,
 
   /* BitSet */
   bs, // bitset
