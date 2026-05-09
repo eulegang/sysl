@@ -200,6 +200,10 @@ ssize_t tokenizer(size_t cur, arcana_slice content,
     break;
 
   case 'f':
+    if ((inc = arcana_util_keyword(window, "fn"))) {
+      *token_type = token(fn);
+      return inc;
+    }
     if ((inc = arcana_util_keyword(window, "false"))) {
       *token_type = token(bool_f);
       return inc;
@@ -331,6 +335,7 @@ void init_table() {
   arcana_table_push(&table, "enum");   // push_str(enumeration);
   push_str(bitset);
   push_str(alias);
+  push_str(fn);
 
   push_str(let);
   push_str(var);

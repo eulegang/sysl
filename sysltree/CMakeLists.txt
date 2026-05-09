@@ -10,6 +10,7 @@ add_library(
   src/parsers/enum.cpp
   src/parsers/struct.cpp
   src/parsers/types.cpp
+  src/parsers/func.cpp
 )
 
 pkg_check_modules(ARCANA REQUIRED IMPORTED_TARGET arcana)
@@ -45,6 +46,7 @@ add_executable(
   sysl-tokenize
 
   bin/tokenize.cpp
+  bin/util.cpp
 )
 
 target_include_directories(sysl-tokenize PUBLIC ./src)

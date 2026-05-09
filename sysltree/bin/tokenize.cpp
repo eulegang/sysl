@@ -11,6 +11,7 @@
 #include <mfile.h>
 
 #include "tokens.h"
+#include "util.h"
 
 bool lex_file(std::string_view content, const char *path);
 
@@ -88,6 +89,7 @@ chroma::basic_t token_color(sysltree::token type) {
   case sysltree::token::enumeration:
   case sysltree::token::bitset:
   case sysltree::token::alias:
+  case sysltree::token::fn:
     return chroma::purple;
 
   case sysltree::token::cond:
@@ -157,22 +159,7 @@ bool lex_file(std::string_view content, const char *path) {
     if (path)
       std::cerr << path << ":" << std::endl;
 
-    switch (err.err) {
-    case ARCANA_TOKENS_ERROR_MAP:
-      std::cerr << "failed to map memory" << std::endl;
-      break;
-    case ARCANA_TOKENS_ERROR_OVERFLOW:
-      std::cerr << "File to large to tokenize" << std::endl;
-      break;
-    case ARCANA_TOKENS_ERROR_INVALID:
-      std::cerr << "Invalid token found" << std::endl;
-      auto len = content.find_first_of("\n", err.pos);
-      auto sub = content.substr(err.pos, len - 1);
-      std::cerr << sub << std::endl;
-      std::cerr << "^" << std::endl;
-
-      break;
-    }
+    report_token_error(err, content);
 
     return false;
   }
@@ -192,9 +179,10 @@ bool lex_file(std::string_view content, const char *path) {
     std::string_view text{content.data() + base[i].off, base[i].len};
 
     if (verbose) {
-      std::cout << pad << token_color(type) << type << "\t" << chroma::yellow
-                << meta[i].line << ":" << meta[i].column << "\t"
-                << chroma::purple << text << chroma::clear << std::endl;
+      std::cout << pad << chroma::cyan << i << "\t" << token_color(type) << type
+                << "\t" << chroma::yellow << meta[i].line << ":"
+                << meta[i].column << "\t" << chroma::purple << text
+                << chroma::clear << std::endl;
     } else {
       std::cout << pad << token_color(type) << type << chroma::clear
                 << std::endl;

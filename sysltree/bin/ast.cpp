@@ -171,6 +171,31 @@ void dump_sysl(arcana_node node, void *data, size_t level, arcana_slice content,
 
     break;
 
+  case sysltree::node::fn:
+    out << chroma::hex(0xff00aa) << "fn";
+    break;
+
+  case sysltree::node::fn_params:
+    out << chroma::hex(0xff00aa) << "params";
+    break;
+
+  case sysltree::node::fn_param:
+    out << chroma::hex(0xff00aa) << "param";
+
+    if (verbose) {
+      uint16_t idx = *(uint16_t *)data;
+      auto token = arcana_tokens_data(ctx->tokens)[idx];
+      std::string_view ident{content.data + token.off, token.len};
+
+      out << " " << chroma::hex(0xaaffaa) << ident;
+    }
+
+    break;
+
+  case sysltree::node::fn_ret:
+    out << chroma::hex(0xff00aa) << "return";
+    break;
+
   case sysltree::node::literal: {
     out << chroma::hex(0xff00ff) << "literal ";
     sysltree::literal_data lit = *(sysltree::literal_data *)data;

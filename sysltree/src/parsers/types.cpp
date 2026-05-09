@@ -147,6 +147,13 @@ void init_type_parser(void) {
       .infix = 0,
       .perc = 0,
   };
+
+  arcana_parser_slots(type_parser)[(uint16_t)token::fn] = {
+      .prefix = sysltree::parse_func_sig,
+      .postfix = 0,
+      .infix = 0,
+      .perc = 0,
+  };
 }
 
 void deinit_type_parser(void) { arcana_parser_deinit(type_parser); }

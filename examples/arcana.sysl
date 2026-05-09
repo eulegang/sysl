@@ -8,7 +8,7 @@ arcana :: namespace {
     len: u16;
   }
 
-  // tokenizer :: alias fn(cur: u64, content: []u8, ty: *token_type) -> i64;
+  tokenizer :: alias fn(cur: u64, content: []u8, ty: *token_type) -> i64;
 
   position :: struct {
     line: u16;

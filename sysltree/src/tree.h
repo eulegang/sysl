@@ -26,6 +26,11 @@ enum class node : uint16_t {
   bs,
   bs_case,
 
+  fn,
+  fn_params,
+  fn_param,
+  fn_ret,
+
   literal,
 
   ty, // a type slot

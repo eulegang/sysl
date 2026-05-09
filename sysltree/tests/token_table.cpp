@@ -31,6 +31,7 @@ TEST(token_table, exact_match) {
 
   check(bitset);
   check(alias);
+  check(fn);
 
   check(let);
   check(var);
