@@ -41,29 +41,3 @@ add_test(
   COMMAND unit
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-add_executable(
-  sysl-tokenize
-
-  bin/tokenize.cpp
-  bin/util.cpp
-)
-
-target_include_directories(sysl-tokenize PUBLIC ./src)
-target_link_libraries(sysl-tokenize sysltree)
-target_link_libraries(sysl-tokenize PkgConfig::ARCANA)
-target_link_libraries(sysl-tokenize PkgConfig::MFILE)
-target_link_libraries(sysl-tokenize PkgConfig::CHROMA)
-
-add_executable(
-  sysl-ast
-
-  bin/ast.cpp
-  bin/util.cpp
-)
-
-target_include_directories(sysl-ast PUBLIC ./src)
-target_link_libraries(sysl-ast sysltree)
-target_link_libraries(sysl-ast PkgConfig::ARCANA)
-target_link_libraries(sysl-ast PkgConfig::MFILE)
-target_link_libraries(sysl-ast PkgConfig::CHROMA)

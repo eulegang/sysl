@@ -1,0 +1,196 @@
+
+#include <getopt.h>
+
+#include <iostream>
+#include <string_view>
+#include <unistd.h>
+#include <vector>
+
+#include <arcana.h>
+#include <chroma.h>
+#include <mfile.h>
+
+#include "tokens.h"
+#include "util.h"
+
+bool lex_file(std::string_view content, const char *path);
+
+bool verbose = false;
+bool color = true;
+
+int main(int argc, char **argv) {
+  static struct option long_options[] = {
+      {"verbose", no_argument, 0, 'v'},
+      {"help", no_argument, 0, 'h'},
+      {0, 0, 0, 0},
+      // Sentinel to mark the end of the array
+  };
+
+  int c;
+
+  const char *no_color = getenv("NO_COLOR");
+
+  if (no_color && no_color[0] != 0) {
+    color = false;
+  }
+
+  std::vector<std::string> files;
+  while ((c = getopt_long(argc, argv, "vh", long_options, NULL)) != -1) {
+    switch (c) {
+    case 'v':
+      verbose = true;
+      break;
+
+    case 'h':
+      std::cout << "sysl-tokenize [-v] [files...]" << std::endl;
+      return 0;
+      break;
+    }
+  }
+
+  int opt_i = optind;
+  while (opt_i < argc) {
+    files.push_back(argv[opt_i++]);
+  }
+
+  if (!color) {
+    std::cout << chroma::disable;
+  }
+
+  bool success = true;
+  if (files.empty()) {
+    std::string content((std::istreambuf_iterator<char>(std::cin)),
+                        std::istreambuf_iterator<char>());
+    success &= lex_file(content, NULL);
+  } else if (files.size() == 1) {
+    mfile file{files[0]};
+    success &= lex_file(file, NULL);
+  } else {
+    for (const auto &path : files) {
+      mfile file{path.c_str()};
+      success &= lex_file(file, path.c_str());
+    }
+  }
+
+  if (!success) {
+    return 2;
+  }
+
+  return 0;
+}
+
+chroma::basic_t token_color(sysltree::token type) {
+
+  switch (type) {
+  case sysltree::token::ident:
+    return chroma::cyan;
+  case sysltree::token::ns:
+  case sysltree::token::strukt:
+  case sysltree::token::enumeration:
+  case sysltree::token::bitset:
+  case sysltree::token::alias:
+  case sysltree::token::fn:
+  case sysltree::token::opaque:
+    return chroma::purple;
+
+  case sysltree::token::cond:
+  case sysltree::token::otherwise:
+  case sysltree::token::ret:
+  case sysltree::token::let:
+  case sysltree::token::var:
+    return chroma::purple;
+
+  case sysltree::token::integer:
+  case sysltree::token::str:
+  case sysltree::token::bool_t:
+  case sysltree::token::bool_f:
+    return chroma::cyan;
+
+  case sysltree::token::bool_and:
+  case sysltree::token::bool_or:
+  case sysltree::token::bool_and_assign:
+  case sysltree::token::bool_or_assign:
+  case sysltree::token::assign:
+  case sysltree::token::plus:
+  case sysltree::token::bang:
+  case sysltree::token::minus:
+  case sysltree::token::div:
+  case sysltree::token::mult:
+  case sysltree::token::mod:
+  case sysltree::token::plus_assign:
+  case sysltree::token::minus_assign:
+  case sysltree::token::mult_assign:
+  case sysltree::token::div_assign:
+  case sysltree::token::mod_assign:
+  case sysltree::token::eq:
+  case sysltree::token::ne:
+  case sysltree::token::lt:
+  case sysltree::token::le:
+  case sysltree::token::gt:
+  case sysltree::token::ge:
+    return chroma::blue;
+
+  case sysltree::token::comma:
+  case sysltree::token::semi:
+  case sysltree::token::lparen:
+  case sysltree::token::rparen:
+  case sysltree::token::lbrace:
+  case sysltree::token::rbrace:
+  case sysltree::token::lbracket:
+  case sysltree::token::rbracket:
+  case sysltree::token::arrow:
+  case sysltree::token::dcolon:
+  case sysltree::token::colon:
+    return chroma::yellow;
+  }
+
+  return chroma::cyan;
+}
+
+bool lex_file(std::string_view content, const char *path) {
+  arcana_tokens_options opts = {
+      .content = {.data = content.data(), .len = content.length()},
+      .tokenizer = sysltree::tokenizer,
+  };
+
+  arcana_tokens_error err;
+  arcana_tokens *tokens = arcana_tokens_init(opts, &err);
+
+  if (!tokens) {
+    if (path)
+      std::cerr << path << ":" << std::endl;
+
+    report_token_error(err, content);
+
+    return false;
+  }
+
+  const char *pad = "";
+  if (path) {
+    std::cout << path << ":" << std::endl;
+    pad = "  ";
+  }
+
+  size_t len = arcana_tokens_len(tokens);
+  arcana_token *base = arcana_tokens_data(tokens);
+  arcana_linemeta *meta = arcana_tokens_linemeta(tokens);
+
+  for (size_t i = 0; i < len; i++) {
+    sysltree::token type = (sysltree::token)base[i].type;
+    std::string_view text{content.data() + base[i].off, base[i].len};
+
+    if (verbose) {
+      std::cout << pad << chroma::cyan << i << "\t" << token_color(type) << type
+                << "\t" << chroma::yellow << meta[i].line << ":"
+                << meta[i].column << "\t" << chroma::purple << text
+                << chroma::clear << std::endl;
+    } else {
+      std::cout << pad << token_color(type) << type << chroma::clear
+                << std::endl;
+    }
+  }
+
+  arcana_tokens_deinit(tokens);
+
+  return true;
+}
