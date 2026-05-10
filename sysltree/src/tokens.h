@@ -11,6 +11,7 @@ enum class token : arcana_token_type {
   bitset,
   alias,
   fn,
+  opaque,
 
   let,
   var,

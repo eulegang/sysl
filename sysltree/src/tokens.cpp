@@ -232,6 +232,13 @@ ssize_t tokenizer(size_t cur, arcana_slice content,
     }
     break;
 
+  case 'o':
+    if ((inc = arcana_util_keyword(window, "opaque"))) {
+      *token_type = token(opaque);
+      return inc;
+    }
+    break;
+
   case 's':
     if ((inc = arcana_util_keyword(window, "struct"))) {
       *token_type = token(strukt);
@@ -336,6 +343,7 @@ void init_table() {
   push_str(bitset);
   push_str(alias);
   push_str(fn);
+  push_str(opaque);
 
   push_str(let);
   push_str(var);

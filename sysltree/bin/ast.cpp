@@ -118,6 +118,15 @@ void dump_sysl(arcana_node node, void *data, size_t level, arcana_slice content,
 
   case sysltree::node::st:
     out << chroma::hex(0xff00ff) << "struct";
+
+    if (verbose) {
+      uint16_t meta = *(uint16_t *)data;
+
+      if ((meta & SYSLTREE_ACCESS_OPAQUE) != 0) {
+        out << " " << chroma::hex(0xaaffaa) << "opaque";
+      }
+    }
+
     break;
 
   case sysltree::node::st_fields:

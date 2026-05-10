@@ -51,18 +51,24 @@ arcana_state parse_struct_field(arcana_state state) {
 }
 
 arcana_state parse_struct(arcana_state state) {
-  arcana_token token = arcana_state_token(state);
-
-  if (token.type != token_code(strukt)) {
-    state.status |= 4;
-    return state;
+  uint16_t meta = 0;
+  if (arcana_state_token(state).type == token_code(opaque)) {
+    meta |= SYSLTREE_ACCESS_OPAQUE;
+    arcana_state_next(&state);
   }
+
+  check_token(strukt);
+
+  data_id struct_meta_id = arcana_state_malloc(&state, sizeof(uint16_t));
+  uint16_t *data = (uint16_t *)arcana_state_data(state, struct_meta_id);
+  *data = meta;
+
   uint16_t node = arcana_state_alloc_node(&state);
   arcana_node *root = arcana_state_node(state, node);
   *root = {
       .child = 0,
       .next = 0,
-      .offset = 0,
+      .offset = struct_meta_id,
       .type = node_code(st),
   };
 
@@ -90,7 +96,7 @@ arcana_state parse_struct(arcana_state state) {
   if (state.status)
     return state;
 
-  token = arcana_state_token(state);
+  arcana_token token = arcana_state_token(state);
   if (token.type != token_code(lbrace)) {
     state.status |= 1;
     return state;

@@ -28,35 +28,50 @@ arcana_state parse_declaration(arcana_state state) {
   node->child = ident_node;
 
   arcana_node *ident = arcana_state_node(state, ident_node);
-  switch ((sysltree::token)token.type) {
-  case sysltree::token::bitset:
-    state = parse_bitset(state);
-    ident->next = state.subroot;
-    break;
 
-  case sysltree::token::ns:
-    state = parse_namespace(state);
-    ident->next = state.subroot;
-    break;
+  arcana_state begin = state;
+  bool scanning = true;
+  while (scanning) {
+    token = arcana_state_token(state);
+    switch ((sysltree::token)token.type) {
+    case sysltree::token::bitset:
+      state = parse_bitset(begin);
+      ident->next = state.subroot;
+      scanning = false;
+      break;
 
-  case sysltree::token::enumeration:
-    state = parse_enum(state);
-    ident->next = state.subroot;
-    break;
+    case sysltree::token::ns:
+      state = parse_namespace(begin);
+      ident->next = state.subroot;
+      scanning = false;
+      break;
 
-  case sysltree::token::strukt:
-    state = parse_struct(state);
-    ident->next = state.subroot;
-    break;
+    case sysltree::token::enumeration:
+      state = parse_enum(begin);
+      ident->next = state.subroot;
+      scanning = false;
+      break;
 
-  case sysltree::token::alias:
-    state = parse_alias(state);
-    ident->next = state.subroot;
-    break;
+    case sysltree::token::strukt:
+      state = parse_struct(begin);
+      ident->next = state.subroot;
+      scanning = false;
+      break;
 
-  default:
-    state.status |= 4;
-    return state;
+    case sysltree::token::alias:
+      state = parse_alias(begin);
+      ident->next = state.subroot;
+      scanning = false;
+      break;
+
+    case sysltree::token::opaque:
+      arcana_state_next(&state);
+      break;
+
+    default:
+      state.status |= 4;
+      return state;
+    }
   }
 
   if (state.status) {

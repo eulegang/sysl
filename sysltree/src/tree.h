@@ -1,6 +1,8 @@
 #pragma once
 #include "arcana.h"
 
+#define SYSLTREE_ACCESS_OPAQUE 1
+
 namespace sysltree {
 enum class node : uint16_t {
   declare,
