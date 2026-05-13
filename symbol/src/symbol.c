@@ -36,12 +36,15 @@ symbol_table *symbol_table_init(size_t cap, size_t pages) {
   return self;
 }
 
-void symbol_table_deinit(symbol_table *self) { munmap(self, self->total); }
+void symbol_table_deinit(symbol_table *self) {
+  if (self)
+    munmap(self, self->total);
+}
 
-symbol symbol_table_intern(symbol_table *self, const char *content) {
+symbol symbol_table_intern_slice(symbol_table *self, const char *content,
+                                 size_t len) {
   char *base = (char *)(((uint16_t *)(self + 1)) + self->cap);
   uint16_t *index_base = (uint16_t *)(self + 1);
-  size_t len = strlen(content);
 
   for (size_t i = 0; i < self->len; i++) {
     uint16_t off = index_base[i];
@@ -57,7 +60,8 @@ symbol symbol_table_intern(symbol_table *self, const char *content) {
 
   symbol result = self->len;
   if (!self->len) {
-    memcpy(base, content, len + 1);
+    memcpy(base, content, len);
+    base[len + 1] = 0;
     index_base[0] = 0;
   } else {
     uint16_t prior = index_base[self->len - 1];
@@ -65,12 +69,18 @@ symbol symbol_table_intern(symbol_table *self, const char *content) {
     uint16_t data_offset = prior + prior_len + 1;
     char *dest = base + data_offset;
 
-    memcpy(dest, content, len + 1);
+    memcpy(dest, content, len);
+    dest[len + 1] = 0;
     index_base[self->len] = data_offset;
   }
 
   self->len++;
   return result;
+}
+
+symbol symbol_table_intern(symbol_table *self, const char *content) {
+  size_t len = strlen(content);
+  return symbol_table_intern_slice(self, content, len);
 }
 
 const char *symbol_table_resolve(symbol_table *self, symbol sym) {

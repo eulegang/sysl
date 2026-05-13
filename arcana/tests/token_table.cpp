@@ -1,16 +1,16 @@
 
-#include <arcana.h>
+#include <sigil.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "tokens.h"
+#include "arcana.h"
 
 #define token(T) sysl_token::T
 
 #define check(T)                                                               \
   ss.str("");                                                                  \
-  ss << sysltree::token::T;                                                    \
+  ss << arcana::Token::T;                                                      \
   EXPECT_EQ(ss.str(), #T);
 
 TEST(token_table, exact_match) {
@@ -22,11 +22,11 @@ TEST(token_table, exact_match) {
   check(ns);
 
   ss.str("");
-  ss << sysltree::token::strukt;
+  ss << arcana::Token::strukt;
   EXPECT_EQ(ss.str(), "struct");
 
   ss.str("");
-  ss << sysltree::token::enumeration;
+  ss << arcana::Token::enumeration;
   EXPECT_EQ(ss.str(), "enum");
 
   check(bitset);
@@ -75,11 +75,11 @@ TEST(token_table, exact_match) {
   check(colon);
 
   ss.str("");
-  ss << sysltree::token::cond;
+  ss << arcana::Token::cond;
   EXPECT_EQ(ss.str(), "if");
 
   ss.str("");
-  ss << sysltree::token::otherwise;
+  ss << arcana::Token::otherwise;
   EXPECT_EQ(ss.str(), "else");
 
   check(ret);

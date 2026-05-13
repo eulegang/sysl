@@ -1,71 +1,70 @@
 
-#include "../tokens.h"
-#include "../tree.h"
+#include "../arcana.h"
 #include "parsers.h"
-#include <arcana.h>
 #include <cstdint>
+#include <sigil.h>
 
-namespace sysltree {
-arcana_state parse_declaration(arcana_state state) {
-  state = sysltree::parse_ident(state);
+namespace arcana {
+sigil_state parse_declaration(sigil_state state) {
+  state = parse_ident(state);
   if (state.status)
     return state;
 
   uint16_t ident_node = state.subroot;
 
-  arcana_token token = arcana_state_token(state);
+  sigil_token token = sigil_state_token(state);
   if (token.type != token_code(dcolon)) {
     state.status |= 4;
     return state;
   }
 
-  arcana_state_next(&state);
-  token = arcana_state_token(state);
+  sigil_state_next(&state);
+  token = sigil_state_token(state);
 
-  uint16_t idx = arcana_state_alloc_node(&state);
-  arcana_node *node = arcana_state_node(state, idx);
+  uint16_t idx = sigil_state_alloc_node(&state);
+  sigil_node *node = sigil_state_node(state, idx);
   node->type = node_code(declare);
   node->child = ident_node;
 
-  arcana_node *ident = arcana_state_node(state, ident_node);
+  sigil_node *ident = sigil_state_node(state, ident_node);
 
-  arcana_state begin = state;
+  sigil_state begin = state;
   bool scanning = true;
   while (scanning) {
-    token = arcana_state_token(state);
-    switch ((sysltree::token)token.type) {
-    case sysltree::token::bitset:
+    token = sigil_state_token(state);
+    switch ((Token)token.type) {
+    case Token::bitset:
       state = parse_bitset(begin);
       ident->next = state.subroot;
       scanning = false;
       break;
 
-    case sysltree::token::ns:
+    case Token::ns:
       state = parse_namespace(begin);
       ident->next = state.subroot;
       scanning = false;
       break;
 
-    case sysltree::token::enumeration:
+    case Token::enumeration:
       state = parse_enum(begin);
       ident->next = state.subroot;
       scanning = false;
       break;
 
-    case sysltree::token::strukt:
+    case Token::strukt:
       state = parse_struct(begin);
       ident->next = state.subroot;
       scanning = false;
       break;
 
-    case sysltree::token::alias:
+    case Token::alias:
       state = parse_alias(begin);
       ident->next = state.subroot;
       scanning = false;
       break;
 
-    case sysltree::token::opaque:
-      arcana_state_next(&state);
+    case Token::opaque:
+      sigil_state_next(&state);
       break;
 
     default:
@@ -81,4 +80,4 @@ arcana_state parse_declaration(arcana_state state) {
   state.subroot = idx;
   return state;
 }
-} // namespace sysltree
+} // namespace arcana
