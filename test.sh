@@ -5,4 +5,3 @@ cmake --build build
 
 ctest --test-dir build/arcana --output-on-failure
 ctest --test-dir build/symbol --output-on-failure
-# ctest --test-dir build/tydb --output-on-failure

@@ -12,5 +12,5 @@ pkg_check_modules(CHROMA REQUIRED IMPORTED_TARGET chroma)
 
 add_subdirectory(symbol)
 add_subdirectory(arcana)
-# add_subdirectory(util)
+add_subdirectory(arcanac)
 
