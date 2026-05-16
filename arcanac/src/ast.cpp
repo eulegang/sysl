@@ -90,120 +90,120 @@ void dump_nodes(uint16_t, sigil::Ast<arcana::Node>::Node node, void *data,
 
   switch (ty) {
   case arcana::Node::declare:
-    out << chroma::hex(0xffff00) << "declare";
+    out << chroma::yellow << "declare";
     break;
 
   case arcana::Node::ident:
-    out << chroma::hex(0x00c0ffee) << "ident";
+    out << chroma::cyan << "ident";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;
       std::string_view ident = ctx->tokens.content(idx);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::cyan << ident;
     }
 
     break;
 
   case arcana::Node::ns:
-    out << chroma::hex(0xff00ff) << "namespace";
+    out << chroma::purple << "namespace";
     break;
 
   case arcana::Node::alias:
-    out << chroma::hex(0xff00ff) << "alias";
+    out << chroma::purple << "alias";
     break;
 
   case arcana::Node::decls:
-    out << chroma::hex(0xff00ff) << "decls";
+    out << chroma::yellow << "decls";
     break;
 
   case arcana::Node::st:
-    out << chroma::hex(0xff00ff) << "struct";
+    out << chroma::purple << "struct";
 
     if (verbose) {
       uint16_t meta = *(uint16_t *)data;
 
       if ((meta & arcana::ACCESS_OPAQUE) != 0) {
-        out << " " << chroma::hex(0xaaffaa) << "opaque";
+        out << " " << chroma::blue << "opaque";
       }
     }
 
     break;
 
   case arcana::Node::st_fields:
-    out << chroma::hex(0xff00ff) << "fields";
+    out << chroma::purple << "fields";
     break;
 
   case arcana::Node::st_field:
-    out << chroma::hex(0xff00ff) << "field";
+    out << chroma::purple << "field";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;
       std::string_view ident = ctx->tokens.content(idx);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::cyan << ident;
     }
 
     break;
 
   case arcana::Node::en:
-    out << chroma::hex(0xff00ff) << "enum";
+    out << chroma::purple << "enum";
     break;
 
   case arcana::Node::en_case:
-    out << chroma::hex(0xff00aa) << "enum-case";
+    out << chroma::purple << "enum-case";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;
       std::string_view ident = ctx->tokens.content(idx);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::cyan << ident;
     }
 
     break;
 
   case arcana::Node::bs:
-    out << chroma::hex(0xff00ff) << "bitset";
+    out << chroma::purple << "bitset";
     break;
 
   case arcana::Node::bs_case:
-    out << chroma::hex(0xff00aa) << "bitset-case";
+    out << chroma::purple << "bitset-case";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;
       std::string_view ident = ctx->tokens.content(idx);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::cyan << ident;
     }
 
     break;
 
   case arcana::Node::fn:
-    out << chroma::hex(0xff00aa) << "fn";
+    out << chroma::purple << "fn";
     break;
 
   case arcana::Node::fn_params:
-    out << chroma::hex(0xff00aa) << "params";
+    out << chroma::purple << "params";
     break;
 
   case arcana::Node::fn_param:
-    out << chroma::hex(0xff00aa) << "param";
+    out << chroma::purple << "param";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;
       std::string_view ident = ctx->tokens.content(idx);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::cyan << ident;
     }
 
     break;
 
   case arcana::Node::fn_ret:
-    out << chroma::hex(0xff00aa) << "return";
+    out << chroma::purple << "return";
     break;
 
   case arcana::Node::literal: {
-    out << chroma::hex(0xff00ff) << "literal ";
+    out << chroma::blue << "literal ";
     arcana::LiteralData lit = *(arcana::LiteralData *)data;
 
     switch (lit.prim) {
@@ -219,40 +219,40 @@ void dump_nodes(uint16_t, sigil::Ast<arcana::Node>::Node node, void *data,
     }
 
     if (verbose) {
-      std::string_view ident = ctx->tokens.content(lit.token);
+      std::string_view txt = ctx->tokens.content(lit.token);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::yellow << txt;
     }
 
     break;
   }
 
   case arcana::Node::infer_type:
-    out << chroma::hex(0x0ffaaaa) << "infer";
+    out << chroma::purple << "infer";
     break;
 
   case arcana::Node::ty:
-    out << chroma::hex(0xaaccaa) << "type";
+    out << chroma::purple << "type";
     break;
 
   case arcana::Node::slice:
-    out << chroma::hex(0xaaff88) << "slice";
+    out << chroma::purple << "slice";
     break;
 
   case arcana::Node::array:
-    out << chroma::hex(0xaaff88) << "array";
+    out << chroma::blue << "array";
 
     if (verbose) {
       uint16_t idx = *(uint16_t *)data;
       std::string_view ident = ctx->tokens.content(idx);
 
-      out << " " << chroma::hex(0xaaffaa) << ident;
+      out << " " << chroma::cyan << ident;
     }
 
     break;
 
   case arcana::Node::pointer:
-    out << chroma::hex(0xaaff88) << "pointer";
+    out << chroma::purple << "pointer";
 
     break;
   }
